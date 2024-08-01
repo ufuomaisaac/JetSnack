@@ -357,6 +357,7 @@ private fun CollapsingImageLayout(
         val imageWidth = lerp(imageMaxSize, imageMinSize, collapseFraction)
         val imagePlaceable = measurables[0].measure(Constraints.fixed(imageWidth, imageWidth))
 
+        //lerp(start, end, fraction) it animates from staet to finish with the fraction which is coerce within 0-1
         val imageY = lerp(MinTitleOffset, MinImageOffset, collapseFraction).roundToPx()
         val imageX = lerp(
             (constraints.maxWidth - imageWidth) / 2, // centered when expanded
@@ -364,8 +365,10 @@ private fun CollapsingImageLayout(
             collapseFraction
         )
         layout(
-            width = constraints.maxWidth,
-            height = imageY + imageWidth
+           // width = constraints.maxWidth,
+            width = 49,
+            height = 50
+           // height = imageY + imageWidth
         ) {
             //This is requires to set the position of the image with the given coordinates
                   imagePlaceable.placeRelative(imageX, imageY)
