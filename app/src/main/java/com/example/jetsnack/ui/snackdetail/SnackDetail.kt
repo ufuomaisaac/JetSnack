@@ -264,7 +264,7 @@ private fun Body(
 @Composable
 private fun Title(snack: Snack, scrollProvider: () -> Int) {
 
-    //LocalDensit.current helps with the conversion of dp to px
+    //LocalDensity.current helps with the conversion of dp to px
     val maxOffset = with(LocalDensity.current) { MaxTitleOffset.toPx() }
     val minOffset = with(LocalDensity.current) { MinTitleOffset.toPx() }
 
@@ -277,11 +277,15 @@ private fun Title(snack: Snack, scrollProvider: () -> Int) {
             //This is responsible for the displacement of the title
             .offset {
                 val scroll = scrollProvider()
+
+                //The lowest limit of the offsetvalue is the minOffset
                 val offset = (maxOffset - scroll )
                     .coerceAtLeast(minOffset)
+
+                //There is no displacement in the vertical axis but there is displacement in the vertical axis based
+                //based on the value of offset
                 IntOffset(x = 0, y = offset.toInt())
             }
-            //
 
             .background(color = JetsnackTheme.colors.uiBackground)
     ) {
@@ -323,7 +327,7 @@ private fun Image(
         //.coerceIn() ensures that the value is within the range
         (scrollProvider() / collapseRange).coerceIn(0f, 1f)
     }
-
+    //
     CollapsingImageLayout(
         collapseFractionProvider = collapseFractionProvider,
         modifier = HzPadding.statusBarsPadding()
@@ -352,13 +356,21 @@ private fun CollapsingImageLayout(
 
         val collapseFraction = collapseFractionProvider()
 
+        //Gets the image max size
         val imageMaxSize = min(ExpandedImageSize.roundToPx(), constraints.maxWidth)
+
+        //Gets the image min size
         val imageMinSize = max(CollapsedImageSize.roundToPx(), constraints.minWidth)
+
+        //it interpolates between the imageMaxSize and imageMinSize with the collapseFraction that was given
         val imageWidth = lerp(imageMaxSize, imageMinSize, collapseFraction)
         val imagePlaceable = measurables[0].measure(Constraints.fixed(imageWidth, imageWidth))
 
-        //lerp(start, end, fraction) it animates from staet to finish with the fraction which is coerce within 0-1
+        //lerp(start, end, fraction) it animates from start to finish with the fraction which is coerce within 0-1
+        //so this function interpolates between the minTitleoffset = 56dp and minImageOffset = 12dp
         val imageY = lerp(MinTitleOffset, MinImageOffset, collapseFraction).roundToPx()
+
+        //
         val imageX = lerp(
             (constraints.maxWidth - imageWidth) / 2, // centered when expanded
             constraints.maxWidth - imageWidth, // right aligned when collapsed
