@@ -90,16 +90,18 @@ private val TitleHeight = 128.dp
 //This is for the height of Gradient
 private val GradientScroll = 180.dp
 
-//This is the extra distance after the gradientScroll ot avoid an overlab between the image and the title
+//This is the extra distance after the gradientScroll ot avoid an
+//overlab between the image and the title in the vertical axis
 private val ImageOverlap = 115.dp
 
-//This is the top app bar distance
+//This is the top app bar distance in the vertical axis
 private val MinTitleOffset = 56.dp
 
 //This is the  minimum distance between the image and the starting point
+//The minimum image displaceemnt in the vertical axis
 private val MinImageOffset =12.dp
 
-//This is the maximum title offset
+//This is the maximum title offset/displacement in the vertical axis
 private val MaxTitleOffset = ImageOverlap + MinTitleOffset + GradientScroll
 
 //This is the Expanded Image size
@@ -141,7 +143,7 @@ private fun Header() {
     )
 }
 
-//This is for the navidation button
+//This is for the navigation button
 @Composable
 private fun Up(upPress: () -> Unit) {
     IconButton(
@@ -261,6 +263,8 @@ private fun Body(
 
 @Composable
 private fun Title(snack: Snack, scrollProvider: () -> Int) {
+
+    //LocalDensit.current helps with the conversion of dp to px
     val maxOffset = with(LocalDensity.current) { MaxTitleOffset.toPx() }
     val minOffset = with(LocalDensity.current) { MinTitleOffset.toPx() }
 
@@ -315,6 +319,8 @@ private fun Image(
 ) {
     val collapseRange = with(LocalDensity.current) { (MaxTitleOffset - MinTitleOffset).toPx() }
     val collapseFractionProvider = {
+
+        //.coerceIn() ensures that the value is within the range
         (scrollProvider() / collapseRange).coerceIn(0f, 1f)
     }
 
@@ -361,6 +367,7 @@ private fun CollapsingImageLayout(
             width = constraints.maxWidth,
             height = imageY + imageWidth
         ) {
+            //This is requires to set the position of the image with the given coordinates
                   imagePlaceable.placeRelative(imageX, imageY)
         }
     }
