@@ -178,6 +178,7 @@ private fun Body(
                 .height(MinTitleOffset)
         )
         Column(
+            //This allows movement scrolling in the vertical axis
             modifier = Modifier.verticalScroll(scroll)
         ) {
             Spacer(Modifier.height(GradientScroll))
@@ -321,6 +322,7 @@ private fun Image(
     imageUrl: String,
     scrollProvider: () -> Int
 ) {
+
     val collapseRange = with(LocalDensity.current) { (MaxTitleOffset - MinTitleOffset).toPx() }
     val collapseFractionProvider = {
 
@@ -352,6 +354,8 @@ private fun CollapsingImageLayout(
         modifier = modifier,
         content = content
     ) { measurables, constraints ->
+
+        //This ensures that there is only one measurable (child composable), else it throws an exception
         check(measurables.size == 1)
 
         val collapseFraction = collapseFractionProvider()
@@ -364,6 +368,9 @@ private fun CollapsingImageLayout(
 
         //it interpolates between the imageMaxSize and imageMinSize with the collapseFraction that was given
         val imageWidth = lerp(imageMaxSize, imageMinSize, collapseFraction)
+
+        // The first child is measured with the given width and height constraints
+        //The constraint.fixed method creates a constraint that forces the child to a specific width and height
         val imagePlaceable = measurables[0].measure(Constraints.fixed(imageWidth, imageWidth))
 
         //lerp(start, end, fraction) it animates from start to finish with the fraction which is coerce within 0-1
@@ -377,10 +384,8 @@ private fun CollapsingImageLayout(
             collapseFraction
         )
         layout(
-           // width = constraints.maxWidth,
-            width = 49,
-            height = 50
-           // height = imageY + imageWidth
+            width = constraints.maxWidth,
+            height = imageY + imageWidth
         ) {
             //This is requires to set the position of the image with the given coordinates
                   imagePlaceable.placeRelative(imageX, imageY)
